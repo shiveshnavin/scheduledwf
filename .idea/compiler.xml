@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="scheduledwf-resources" />
+        <module name="scheduledwf-server" />
+        <module name="scheduled-mysql-persistence" />
+        <module name="scheduledwf-core" />
+        <module name="scheduledwf-module" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

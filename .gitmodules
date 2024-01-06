@@ -1,0 +1,3 @@
+[submodule "common-creds"]
+	path = common-creds
+	url = https://github.com/shiveshnavin/common-creds

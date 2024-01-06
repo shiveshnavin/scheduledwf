@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
  * @author Jasbir Singh
  */
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@ComponentScan(basePackages = "com.netflix.conductor")
+@ComponentScan(basePackages = {"com.netflix.conductor","io.github.jas34.scheduledwf"})
 public class ScheduledWorkflowConductor {
 	private static final Logger log = LoggerFactory.getLogger(ScheduledWorkflowConductor.class);
 
