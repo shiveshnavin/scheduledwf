@@ -70,7 +70,9 @@ public class ExecutionDAOFacadeExt extends ExecutionDAOFacade {
                 requiresAnd = true;
             }
             if(queries.containsKey("workflowType_IN")){
-                sql.append((requiresAnd ? " AND ":"") + "workflow_id = '"+queries.get("workflowType_IN")+"' ");
+                sql.append("(MATCH(json_data) AGAINST('").append(queries.get("workflowType_IN")
+                        .replaceAll("\"","")
+                        .replaceAll("'", "''")).append("' IN NATURAL LANGUAGE MODE))");
                 requiresAnd = true;
             }
             if(queries.containsKey("startTime>")){
