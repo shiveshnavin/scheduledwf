@@ -69,6 +69,10 @@ public class ExecutionDAOFacadeExt extends ExecutionDAOFacade {
                 sql.append((requiresAnd ? " AND ":"") + "workflow_id = '"+queries.get("workflowId")+"' ");
                 requiresAnd = true;
             }
+            if(queries.containsKey("workflowType_IN")){
+                sql.append((requiresAnd ? " AND ":"") + "workflow_id = '"+queries.get("workflowType_IN")+"' ");
+                requiresAnd = true;
+            }
             if(queries.containsKey("startTime>")){
                 Long to = Long.parseLong(queries.get("startTime>"))/1000;
                 sql.append((requiresAnd ? " AND ":"") + "modified_on > FROM_UNIXTIME("+to+") ");
@@ -110,28 +114,37 @@ public class ExecutionDAOFacadeExt extends ExecutionDAOFacade {
         }
         return result;
     }
-
-
     public static Map<String, String> parseQueryString(String queryString) {
         Map<String, String> queryMap = new HashMap<>();
 
-        // Define patterns for key-value pairs
-        Pattern pattern = Pattern.compile("(\\w+)\\s*([<>!=]+)\\s*\"?([^\"\\s]+)\"?");
-        Matcher matcher = pattern.matcher(queryString);
+        // Define patterns for key-value pairs and IN conditions
+        Pattern keyValuePattern = Pattern.compile("(\\w+)\\s*([<>!=]+)\\s*\"?([^\"\\s]+)\"?");
+        Pattern inConditionPattern = Pattern.compile("(\\w+)\\s+IN\\s+\\(([^)]+)\\)");
+
+        Matcher keyValueMatcher = keyValuePattern.matcher(queryString);
+        Matcher inConditionMatcher = inConditionPattern.matcher(queryString);
 
         // Match key-value pairs
-        while (matcher.find()) {
-            String key = matcher.group(1);
-            String operator = matcher.group(2);
-            String value = matcher.group(3);
+        while (keyValueMatcher.find()) {
+            String key = keyValueMatcher.group(1);
+            String operator = keyValueMatcher.group(2);
+            String value = keyValueMatcher.group(3);
 
             // Add key-value pairs to the map
             queryMap.put(key + operator, value);
         }
 
+        // Match IN conditions
+        while (inConditionMatcher.find()) {
+            String key = inConditionMatcher.group(1);
+            String values = inConditionMatcher.group(2);
+
+            // Add IN conditions to the map
+            queryMap.put(key + "_IN", values);
+        }
+
         return queryMap;
     }
-
     /**
      * ALTER TABLE task
      * ADD FULLTEXT INDEX ft_index_json_data (json_data);
