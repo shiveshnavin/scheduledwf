@@ -57,7 +57,7 @@ public class ExecutionDAOFacadeExt extends ExecutionDAOFacade {
         SearchResult<String> result = new SearchResult<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM workflow WHERE ");
         boolean requiresAnd = false;
-        if(!StringUtils.isEmpty(freeText)){
+        if(!StringUtils.isEmpty(freeText) && freeText.length()>1){
             requiresAnd = true;
             sql.append("(MATCH(json_data) AGAINST('").append(freeText
                             .replaceAll("\"","")
@@ -92,7 +92,10 @@ public class ExecutionDAOFacadeExt extends ExecutionDAOFacade {
         sql.append(" OFFSET ").append(start);
 
          String SQL_QUERY = sql.toString();
-        try (Connection connection = executionDAO.ds.getConnection();
+        if(!requiresAnd){
+            SQL_QUERY = SQL_QUERY.replace("WHERE"," ");
+        }
+         try (Connection connection = executionDAO.ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             List<String > wfids = new ArrayList<>();
