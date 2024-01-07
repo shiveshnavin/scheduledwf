@@ -1,6 +1,7 @@
 package io.github.jas34.scheduledwf;
 
 import java.io.IOException;
+import java.time.ZoneId;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -19,42 +20,42 @@ import org.springframework.util.StringUtils;
  * <a href=
  * "https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#howto-create-an-additional-executable-jar">documentation</a>.<br>
  * Date: 01/10/21-8:37 am
- * 
- * @since v2.0.0
+ *
  * @author Jasbir Singh
+ * @since v2.0.0
  */
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @ComponentScan(basePackages = {"com.netflix.conductor"})
 public class ScheduledWorkflowConductor {
-	private static final Logger log = LoggerFactory.getLogger(ScheduledWorkflowConductor.class);
+    private static final Logger log = LoggerFactory.getLogger(ScheduledWorkflowConductor.class);
 
-	public static void main(String[] args) throws IOException {
-		loadExternalConfig();
+    public static void main(String[] args) throws IOException {
+        loadExternalConfig();
+        System.out.println("Using timezone " + ZoneId.systemDefault());
+        SpringApplication.run(ScheduledWorkflowConductor.class, args);
+    }
 
-		SpringApplication.run(ScheduledWorkflowConductor.class, args);
-	}
-
-	/**
-	 * Reads properties from the location specified in <code>CONDUCTOR_CONFIG_FILE</code>
-	 * and sets them as system properties so they override the default properties.
-	 * <p>
-	 * Spring Boot property hierarchy is documented here,
-	 * https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config
-	 *
-	 * @throws IOException if file can't be read.
-	 */
-	private static void loadExternalConfig() throws IOException {
-		String configFile = System.getProperty("CONDUCTOR_CONFIG_FILE");
-		if (!StringUtils.isEmpty(configFile)) {
-			FileSystemResource resource = new FileSystemResource(configFile);
-			if (resource.exists()) {
-				Properties properties = new Properties();
-				properties.load(resource.getInputStream());
-				properties.forEach((key, value) -> System.setProperty((String) key, (String) value));
-				log.info("Loaded {} properties from {}", properties.size(), configFile);
-			}else {
-				log.warn("Ignoring {} since it does not exist", configFile);
-			}
-		}
-	}
+    /**
+     * Reads properties from the location specified in <code>CONDUCTOR_CONFIG_FILE</code>
+     * and sets them as system properties so they override the default properties.
+     * <p>
+     * Spring Boot property hierarchy is documented here,
+     * https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config
+     *
+     * @throws IOException if file can't be read.
+     */
+    private static void loadExternalConfig() throws IOException {
+        String configFile = System.getProperty("CONDUCTOR_CONFIG_FILE");
+        if (!StringUtils.isEmpty(configFile)) {
+            FileSystemResource resource = new FileSystemResource(configFile);
+            if (resource.exists()) {
+                Properties properties = new Properties();
+                properties.load(resource.getInputStream());
+                properties.forEach((key, value) -> System.setProperty((String) key, (String) value));
+                log.info("Loaded {} properties from {}", properties.size(), configFile);
+            } else {
+                log.warn("Ignoring {} since it does not exist", configFile);
+            }
+        }
+    }
 }
