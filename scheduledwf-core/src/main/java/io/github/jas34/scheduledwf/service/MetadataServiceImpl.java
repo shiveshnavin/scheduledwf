@@ -76,6 +76,7 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
         scheduleWorkflowMetadataDao.updateScheduleWorkflow(scheduledWorkflowDef.get());
+        System.out.println("Updating schedule"+scheduledWorkflowDef.get().toString());
     }
 
     @Override
