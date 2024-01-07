@@ -42,10 +42,13 @@ public class ScheduleWfResource {
 
     @PutMapping("/scheduleWf/{name}")
     @Operation(summary = "Update status of a schedule workflow definition.")
-    public void update(@Parameter(description = "Scheduled workflow name.") @PathVariable("name") String name,
+    public void update(@Parameter(description = "Scheduled workflow name.")
+                           @PathVariable("name") String name,
             @Parameter(
-                    description = "status=SHUTDOWN/DELETE are equal. Either of them can be used.") @RequestParam("status") ScheduleWfDef.Status status) {
-        metadataService.updateScheduledWorkflowDef(name, status);
+                    description = "status=SHUTDOWN/DELETE are equal. Either of them can be used.")
+            @RequestParam("status") ScheduleWfDef.Status status,
+                       @RequestBody(required = false) ScheduleWfDef scheduleWfDef) {
+        metadataService.updateScheduledWorkflowDef(name, status, scheduleWfDef);
     }
 
     @GetMapping("/scheduleWf/{name}")

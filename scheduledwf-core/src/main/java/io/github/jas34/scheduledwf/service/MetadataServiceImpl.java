@@ -12,6 +12,7 @@ import com.netflix.conductor.dao.MetadataDAO;
 
 import io.github.jas34.scheduledwf.dao.ScheduledWfMetadataDAO;
 import io.github.jas34.scheduledwf.metadata.ScheduleWfDef;
+import org.springframework.beans.BeanUtils;
 
 /**
  * @author Jasbir Singh
@@ -50,7 +51,9 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void updateScheduledWorkflowDef(String name, ScheduleWfDef.Status status) {
+    public void updateScheduledWorkflowDef(String name,
+                                           ScheduleWfDef.Status status,
+                                           ScheduleWfDef scheduleWfDef) {
 
         Optional<ScheduleWfDef> scheduledWorkflowDef =
                 scheduleWorkflowMetadataDao.getScheduledWorkflowDef(name);
@@ -60,6 +63,18 @@ public class MetadataServiceImpl implements MetadataService {
                             + " . Create ScheduleWfDef first.");
         }
         scheduledWorkflowDef.get().setStatus(status);
+        if (scheduleWfDef != null) {
+            scheduledWorkflowDef.get().setCronExpression(scheduleWfDef.getCronExpression());
+            scheduledWorkflowDef.get().setCreatedBy(scheduleWfDef.getCreatedBy());
+            scheduledWorkflowDef.get().setOwnerApp(scheduleWfDef.getOwnerApp());
+            scheduledWorkflowDef.get().setWfName(scheduleWfDef.getWfName());
+            scheduledWorkflowDef.get().setWfVersion(scheduleWfDef.getWfVersion());
+            scheduledWorkflowDef.get().setWfInput(scheduleWfDef.getWfInput());
+        }
+        if (status == ScheduleWfDef.Status.DELETE) {
+            scheduleWorkflowMetadataDao.removeScheduleWorkflow(name);
+            return;
+        }
         scheduleWorkflowMetadataDao.updateScheduleWorkflow(scheduledWorkflowDef.get());
     }
 
